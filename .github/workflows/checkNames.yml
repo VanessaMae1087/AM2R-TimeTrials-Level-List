@@ -30,10 +30,19 @@ jobs:
                     continue;
                 fi
 
-                # get supposed name and author from 1st/2nd line, nuking newline characters
-                name=$(sed -n 1p "$f")
+                # Check first line whether its an AM2R Time trials 0.3+ map file
+                firstline=$(sed -n 1p "$f")
+                firstline=$(echo $firstline | sed "s/[\n\r]//g")
+
+                if [[ "$firstline" != "==== AM2R TIME TRIALS ====" ]] ; then
+                    errArr+=("$f is not an AM2R Time trials 0.3+ map file!")
+                    continue;
+                fi
+
+                # get supposed name and author from 3rd/4rd line, nuking newline characters
+                name=$(sed -n 3p "$f")
                 name=$(echo $name | sed "s/[\n\r]//g")
-                author=$(sed -n 2p "$f")
+                author=$(sed -n 4p "$f")
                 author=$(echo $author | sed "s/[\n\r]//g")
 
                 properName="${name,,} - ${author,,}.$properExtension"
